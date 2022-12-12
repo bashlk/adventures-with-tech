@@ -1,0 +1,246 @@
+rest:
+  - scan_interval: 60
+    resource: https://api.golemio.cz/v2/pid/departureboards/?ids[]=U510Z101P&ids[]=U1075Z1P&limit=10
+    headers:
+      X-Access-Token: <token>
+    sensor:
+      - name: Golemio departure board
+        value_template: "{{ now() }}"
+        json_attributes:
+           - "departures"
+
+template:
+  - sensor:
+    - name: departures
+      state: "OK"
+      attributes:
+        tramDepartures: "{{ state_attr('sensor.golemio_departure_board', 'departures') | selectattr('stop.id', 'eq', 'U1075Z1P') | list }}"
+        metroDepartures: "{{ state_attr('sensor.golemio_departure_board', 'departures') | selectattr('stop.id', 'eq', 'U510Z101P') | list }}"
+
+openhasp:
+    plate_door:
+      objects:
+        - obj: "p1b10"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'tramDepartures')[0] }}"
+        - obj: "p1b11"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[0]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'tramDepartures')[0]['trip']['headsign'] }}"
+        - obj: "p1b12"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[0]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b13"
+          properties:
+            "hidden": "{{ state_attr('sensor.departures', 'tramDepartures')[0]['delay']['is_available'] and state_attr('sensor.departures', 'tramDepartures')[0]['delay']['minutes'] == 0 }}"
+            "text": "+{{ state_attr('sensor.departures', 'tramDepartures')[0]['delay']['minutes'] }} min"
+        - obj: "p1b20"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'tramDepartures')[1] }}"
+        - obj: "p1b21"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[1]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'tramDepartures')[1]['trip']['headsign'] }}"
+        - obj: "p1b22"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[1]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b23"
+          properties:
+            "hidden": "{{ state_attr('sensor.departures', 'tramDepartures')[1]['delay']['is_available'] and state_attr('sensor.departures', 'tramDepartures')[1]['delay']['minutes'] == 0 }}"
+            "text": "+{{ state_attr('sensor.departures', 'tramDepartures')[1]['delay']['minutes'] }} min"
+        - obj: "p1b30"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'tramDepartures')[2] }}"
+        - obj: "p1b31"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[2]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'tramDepartures')[2]['trip']['headsign'] }}"
+        - obj: "p1b32"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[2]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b33"
+          properties:
+            "hidden": "{{ state_attr('sensor.departures', 'tramDepartures')[2]['delay']['is_available'] and state_attr('sensor.departures', 'tramDepartures')[2]['delay']['minutes'] == 0 }}"
+            "text": "+{{ state_attr('sensor.departures', 'tramDepartures')[2]['delay']['minutes'] }} min"
+        - obj: "p1b40"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'tramDepartures')[3] }}"
+        - obj: "p1b41"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[3]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'tramDepartures')[3]['trip']['headsign'] }}"
+        - obj: "p1b42"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'tramDepartures')[3]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b43"
+          properties:
+            "hidden": "{{ state_attr('sensor.departures', 'tramDepartures')[3]['delay']['is_available'] and state_attr('sensor.departures', 'tramDepartures')[3]['delay']['minutes'] == 0 }}"
+            "text": "+{{ state_attr('sensor.departures', 'tramDepartures')[3]['delay']['minutes'] }} min"
+        - obj: "p1b50"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[0] }}"
+        - obj: "p1b51"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[0]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'metroDepartures')[0]['trip']['headsign'] }}"
+        - obj: "p1b52"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[0]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b53"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[0]['delay']['is_available'] }}"
+            "text": "+{{ state_attr('sensor.departures', 'metroDepartures')[0]['delay']['minutes'] }} min"
+        - obj: "p1b60"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[1] }}"
+        - obj: "p1b61"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[1]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'metroDepartures')[1]['trip']['headsign'] }}"
+        - obj: "p1b62"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[1]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b63"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[1]['delay']['is_available'] }}"
+            "text": "+{{ state_attr('sensor.departures', 'metroDepartures')[1]['delay']['minutes'] }} min"
+        - obj: "p1b70"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[2] }}"
+        - obj: "p1b71"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[2]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'metroDepartures')[2]['trip']['headsign'] }}"
+        - obj: "p1b72"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[2]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b73"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[2]['delay']['is_available'] }}"
+            "text": "+{{ state_attr('sensor.departures', 'metroDepartures')[2]['delay']['minutes'] }} min"
+        - obj: "p1b80"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[3] }}"
+        - obj: "p1b81"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[3]['route']['short_name'] }} - {{ state_attr('sensor.departures', 'metroDepartures')[3]['trip']['headsign'] }}"
+        - obj: "p1b82"
+          properties:
+            "text": "{{ state_attr('sensor.departures', 'metroDepartures')[3]['arrival_timestamp']['predicted'] | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b83"
+          properties:
+            "hidden": "{{ not state_attr('sensor.departures', 'metroDepartures')[3]['delay']['is_available'] }}"
+            "text": "+{{ state_attr('sensor.departures', 'metroDepartures')[3]['delay']['minutes'] }} min"
+        - obj: "p1b91"
+          properties:
+            "text": "{{ now() | as_timestamp() | timestamp_custom('%H:%M') }}"
+        - obj: "p1b92"
+          properties:
+            "src": "{{ 'L:/z-32-' + states('weather.openweathermap') + '.png' if not is_state('weather.openweathermap','unavailable') }}"
+        - obj: "p1b93"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','temperature') |string + '°C' if not is_state('weather.openweathermap','unavailable') }}"
+        - obj: "p1b100"
+          properties:
+            "hidden": "{{ is_state('weather.openweathermap','unavailable') }}"
+        - obj: "p1b111"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[1]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b112"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[1]['condition'] + '.png' }}"
+        - obj: "p1b113"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[1]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b121"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[2]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b122"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[2]['condition'] + '.png' }}"
+        - obj: "p1b123"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[2]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b131"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[3]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b132"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[3]['condition'] + '.png' }}"
+        - obj: "p1b133"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[3]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b141"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[4]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b142"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[4]['condition'] + '.png' }}"
+        - obj: "p1b143"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[4]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b151"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[5]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b152"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[5]['condition'] + '.png' }}"
+        - obj: "p1b153"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[5]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b161"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[6]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b162"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[6]['condition'] + '.png' }}"
+        - obj: "p1b163"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[6]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b171"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[7]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b172"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[7]['condition'] + '.png' }}"
+        - obj: "p1b173"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[7]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b181"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[8]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b182"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[8]['condition'] + '.png' }}"
+        - obj: "p1b183"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[8]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b191"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[9]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b192"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[9]['condition'] + '.png' }}"
+        - obj: "p1b193"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[9]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b201"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[10]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b202"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[10]['condition'] + '.png' }}"
+        - obj: "p1b203"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[10]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b211"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[11]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b212"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[11]['condition'] + '.png' }}"
+        - obj: "p1b213"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[11]['temperature'] | int | string + '°C'}}"
+        - obj: "p1b221"
+          properties:
+            "text": "{{ as_timestamp(strptime(state_attr('weather.openweathermap','forecast')[12]['datetime'], '%Y-%m-%dT%H:%M:%S%z')) | timestamp_custom('%H:%M') }}"
+        - obj: "p1b222"
+          properties:
+            "src": "{{ 'L:/z-32-' + state_attr('weather.openweathermap','forecast')[12]['condition'] + '.png' }}"
+        - obj: "p1b223"
+          properties:
+            "text": "{{ state_attr('weather.openweathermap','forecast')[12]['temperature'] | int | string + '°C'}}"
